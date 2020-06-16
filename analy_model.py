@@ -21,7 +21,7 @@ class Analysis:
         self.package_path = package_path
         if self.package_path:
             # 用在_analysis_divide_package函数中
-            self.flag = ''
+            self._get_package_type()
             self._analysis_divide_bundle()
             self._analysis_divide_package()
         else:
@@ -61,17 +61,9 @@ class Analysis:
             file_content = f.read().strip().splitlines()
         values_exist = {}
         for index, file_item in enumerate(file_content):
-            if index == 1:
+            if index == 0:
                 continue
             file_info = file_item.split('\t')
-            if file_info[0].upper().find('Assets'):
-                self.divide = APK_PATH
-                self._result_divide = AllSource_APK
-                self.flag = 'apk'
-            elif file_info[0].upper().find('PAYLOAD'):
-                self.divide = IPA_PATH
-                self._result_divide = AllSource_IPA
-                self.flag = 'ipa'
             # print('Current File index: ' + str(index - 1))
             ret = self.is_match(self.divide, file_info[0], 'package')
             if file_info[0] == 'AndroidManifest.xml':
@@ -80,6 +72,8 @@ class Analysis:
                 module_name = ret['module_name']
                 if key != module_name:
                     continue
+                print('module_name: '+ret['module_name'])
+                print('file_info: '+file_info[0])
                 f_write = codecs.open(parent_path + '/' + values + '.tab', 'a+', 'utf-8')
                 if values not in values_exist:
                     values_exist[values] = True
@@ -88,13 +82,32 @@ class Analysis:
                 f_write.close()
         logging.info('Match Package File Info Success !!!')
 
+    def _get_package_type(self):
+        print('[Analysis_Model]: 获取安装包类型信息')
+        with codecs.open(self.package_path, 'r', 'utf-8') as f:
+            file_content = f.read().strip().splitlines()
+
+        for index, file_item in enumerate(file_content):
+            if index == 0:
+                continue
+            file_info = file_item.split('\t')
+            if file_info[0].strip() == 'AndroidManifest.xml':
+                print('[Analysis_Model]: apk文件')
+                self.divide = APK_PATH
+                self._result_divide = AllSource_APK
+                self.flag = 'apk'
+            elif file_info[0].strip() == 'appsize_list.txt':
+                print('[Analysis_Model]: IPA文件')
+                self.divide = IPA_PATH
+                self._result_divide = AllSource_IPA
+                self.flag = 'ipa'
+
     @staticmethod
     def is_match(module_path, file_path, package_flag):
         ret_result = {'is_match': 0, 'module_name': ''}
         for module_name, file_item in module_path.items():
             for file_regex in file_item:
                 if re.match(file_regex.upper(), file_path.upper()):
-
                     if module_name == u'lua文件':
                         if file_path.endswith('.lua'):
                             ret_result['is_match'] = 1

@@ -16,10 +16,12 @@ class Calc:
         self.divide = {}
         if package_divide:
             if package_divide == 'apk':
+                print('[Calc_Model]：匹配到apk包')
                 self.title1 = 'Apk'
                 self.title2 = '/apk_total.tab'
                 self.divide = AllSource_APK
             elif package_divide == 'ipa':
+                print('[Calc_Model]：匹配到ipa包')
                 self.title1 = 'Ipa'
                 self.title2 = '/ipa_total.tab'
                 self.divide = AllSource_IPA

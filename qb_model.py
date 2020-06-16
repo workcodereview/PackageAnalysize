@@ -77,7 +77,8 @@ class QB:
         req = QB_REQUESTS.get(url)
         if req.status_code != 200:
             logging.error(u'builds获取失败\nstatus_code=%d\n%s' % (req.status_code, url))
-            sys.exit(1)
+            return build_svn, build_time
+
         root = ET.fromstring(req.content)
         for item in root.iterfind('version'):
             build_svn = int(item.text)
@@ -94,6 +95,7 @@ class QB:
         if req.status_code != 200:
             logging.error(u'installpacksize.txt 获取失败\nstatus_code=%d\n%s' % (req.status_code, url))
             return package_file_dict
+
         dir_path = ''
         for line_str in req.content.decode().split('\n'):
             if not line_str:
@@ -164,12 +166,13 @@ class QB:
 
     def _load_aba_bundle(self):
         print('[QB_MODEL]：获取bundle_info_dict')
+        bundle_info_dict = {}
         url = RESOURCE_URL + '/%d/original/aba_bundle.json' % self.build_time
         req = requests.get(url)
         if req.status_code != 200:
             logging.error(u'aba_bundle.json 获取失败\nstatus_code=%d\n%s' % (req.status_code, url))
-            sys.exit(1)
-        bundle_info_dict = {}
+            return bundle_info_dict
+
         bundle_count = 0
         for bundle_item in req.content.decode().split('\n'):
             bundle_count = bundle_count + 1

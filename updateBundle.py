@@ -30,7 +30,7 @@ if __name__ == '__main__':
         args.out_path = args.out_path.replace('\\', '/')
     if not os.path.exists(args.out_path):
         os.mkdir(args.out_path)
-    package_flag = get_package_type(args.out_path)
+
     # 生成parseFile.tab parseBundle.tab parsePackageFile.tab
     Qb_Message = QB(args.baseline_buildid, '', '', 'aba_bundle.json', args.out_path)
     # 读取parseFile.tab parseBundle.tab 分类分析

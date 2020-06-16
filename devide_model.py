@@ -181,10 +181,8 @@ IPA_PATH = {
             u'bundle文件': {'Payload/jx3m.app/Data/Raw/Bundle/'},
             u'音频文件': {'Payload/jx3m.app/Data/Raw/Audio/'},
             u'视频文件': {'Payload/jx3m.app/Data/Raw/Movie/'},
-            u'代码文件': {
-                u'lua文件': {'Payload/jx3m.app/Data/Raw/Lua/'},
-                u'mono文件': {'Payload/jx3m.app/Data/Managed/'}
-            },
+            u'lua文件': {'Payload/jx3m.app/Data/Raw/Lua/'},
+            u'mono文件': {'Payload/jx3m.app/Data/Managed/'},
             u'resources': {'Payload/jx3m.app/Data/Resources/'},
             u'签名文件': {'Payload/jx3m.app/_CodeSignature/'}
 }
