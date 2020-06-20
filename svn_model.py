@@ -4,6 +4,7 @@ import re
 
 
 class SVN:
+    # 只需要传入检查的版本控制路径
     def __init__(self, check_dir):
         self.check_dir = check_dir
 
@@ -25,6 +26,7 @@ class SVN:
             if message:
                 return message
 
+    # 返回值： tb = {'Revision': '670896', 'LastAuthor': 'a', 'LastDate':'xx-xx-xx'}
     def info(self, path, username=None, password=None):
         print('[SVN MODEL]: svn info')
         library_url = self.check_dir + '/' + path
@@ -38,14 +40,13 @@ class SVN:
             for value in enumerate(doc.strip().split('\n')):
                 if re.search('Revision:', str(value)):
                     tb_message['Revision'] = self._get_split_info(str(value))
-                    print('[SVN MODEL]: Revision: '+tb_message['Revision'])
                 elif re.search('Last Changed Author:', str(value)):
                     tb_message['LastAuthor'] = self._get_split_info(str(value))
-                    print('[SVN MODEL]:  LastAuthor: '+tb_message['LastAuthor'])
                 elif re.search('Last Changed Date:', str(value)):
                     tb_message['LastDate'] = self._get_split_info(str(value))
         return tb_message
 
+    # 返回值 tb = {'Author': 'a', 'number_message': 'JX3M-XXX ....'}
     def first_submit(self, path, username=None, password=None):
         print('[SVN MODEL]: svn info first submit')
         library_url = self.check_dir + '/' + path
@@ -63,6 +64,7 @@ class SVN:
             tb_message['number_message'] = number_message[2]
             return tb_message
 
+    # 返回值 tb = {'Author': 'a', 'number_message': 'JX3M-XXX ....'}
     def last_submit(self, path, username=None, password=None):
         print('[SVN MODEL]: svn info last submit')
         library_url = self.check_dir + '/' + path
@@ -79,6 +81,7 @@ class SVN:
             tb_message['number_message'] = number_message[2]
             return tb_message
 
+    # 传入行号tb_line = {10,22,34,56,100,....} 返回值 tb = {'line1': 'a', 'line2': 'b', ....}
     def blame(self, path, tb_lines, username=None, password=None):
         print('[SVN MODEL]: svn blame')
         library_url = self.check_dir + '/' + path
@@ -101,6 +104,7 @@ class SVN:
                         tb_message[line_number] = tb_author[1]
         return tb_message
 
+    # 返回值 当前文件的所有提交记录信息
     def log(self, path, username=None, password=None):
         print('[SVN MODEL]: svn log')
         library_url = self.check_dir + '/' + path
@@ -112,19 +116,21 @@ class SVN:
         if doc and doc != '':
             return doc
 
+    # 返回值 tb = {'Author': 'a'}
     def delete(self, path, username=None, password=None):
         print('[SVN MODEL]: svn delete')
         result_message = self.log(path, username, password)
         line = None
+        tb_message = {}
         if result_message:
-            tb_message = result_message.split('Changed paths:')
-            for index, value in enumerate(tb_message):
+            tb_messages = result_message.split('Changed paths:')
+            for index, value in enumerate(tb_messages):
                 if re.search(r' D', value):
                     line = index
                     break
             print('line: '+str(line))
-            author = tb_message[line-1].split('|')[1].strip()
-            return author
+            tb_message['Author'] = tb_messages[line-1].split('|')[1].strip()
+            return tb_message
 
 
 
